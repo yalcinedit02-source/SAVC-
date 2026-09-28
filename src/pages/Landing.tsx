@@ -17,8 +17,8 @@ export default function Landing({ onOpen }: LandingProps) {
         }
       }}
       style={{
-        height: "100vh",
-        background: "radial-gradient(circle at top, #1f1f22 0%, #060606 48%, #020202 100%)",
+        minHeight: "100vh",
+        background: "radial-gradient(circle at top, rgba(255,91,91,0.16) 0%, #060606 42%, #020202 100%)",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
@@ -26,7 +26,9 @@ export default function Landing({ onOpen }: LandingProps) {
         overflow: "hidden",
         touchAction: "none",
         color: "#f5f5f7",
-        padding: 24,
+        padding: 28,
+        position: "relative",
+        willChange: "transform",
       }}
     >
       <motion.div
@@ -38,7 +40,7 @@ export default function Landing({ onOpen }: LandingProps) {
           background: "rgba(255,255,255,0.04)",
           borderRadius: 30,
           padding: "22px 24px",
-          marginBottom: 18,
+          marginBottom: 20,
           backdropFilter: "blur(10px)",
         }}
       >
@@ -78,13 +80,10 @@ export default function Landing({ onOpen }: LandingProps) {
       </motion.p>
 
       <motion.div
-        animate={{ y: [0, -10, 0] }}
-        transition={{ repeat: Infinity, duration: 1.5 }}
-        style={{ position: "absolute", bottom: 40, color: "white", textAlign: "center", cursor: "grab" }}
-      >
-        <div style={{ fontSize: "36px" }}>↑</div>
-        <div style={{ fontSize: "12px", letterSpacing: "3px" }}>YUKARI KAYDIR</div>
-      </motion.div>
+        animate={{ y: [0, -8, 0] }}
+        transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+        style={{ position: "absolute", bottom: 34, width: 134, height: 5, borderRadius: 999, background: "rgba(255,255,255,0.95)", boxShadow: "0 0 18px rgba(255,255,255,0.35)", cursor: "grab" }}
+      />
     </motion.div>
   );
 }

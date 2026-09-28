@@ -1,3 +1,4 @@
+import { motion } from "framer-motion";
 import AppShell from "../components/ui/AppShell";
 import BackButton from "../components/ui/BackButton";
 import Panel from "../components/ui/Panel";
@@ -7,19 +8,24 @@ type ProfileProps = {
   onBack: () => void;
   activeTab: "home" | "tv" | "notifications" | "profile";
   onNavigate: (tab: "home" | "tv" | "notifications" | "profile") => void;
+  showHomeBadge?: boolean;
+  showTvBadge?: boolean;
+  showNotificationsBadge?: boolean;
+  showProfileBadge?: boolean;
 };
 
 const achievements = ["First Contact", "Evidence Collector", "Casebreaker", "Night Shift"];
 
-export default function Profile({ onBack, activeTab, onNavigate }: ProfileProps) {
+export default function Profile({ onBack, activeTab, onNavigate, showHomeBadge = true, showTvBadge = true, showNotificationsBadge = true, showProfileBadge = true }: ProfileProps) {
   return (
-    <AppShell activeTab={activeTab} onNavigate={onNavigate}>
-      <div style={{ minHeight: "100vh", background: "#050505", color: "#f5f5f7", padding: "18px 18px 110px" }}>
+    <AppShell activeTab={activeTab} onNavigate={onNavigate} showHomeBadge={showHomeBadge} showTvBadge={showTvBadge} showNotificationsBadge={showNotificationsBadge} showProfileBadge={showProfileBadge}>
+      <div style={{ minHeight: "100vh", padding: "20px 20px 110px" }}>
         <div style={{ maxWidth: 760, margin: "0 auto" }}>
           <BackButton onBack={onBack} />
 
-          <Panel tone="accent" style={{ marginBottom: 12 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+            <Panel tone="accent" style={{ marginBottom: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "center" }}>
               <div>
                 <div style={{ color: "#ff8d8d", fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase" }}>Investigator</div>
                 <div style={{ fontSize: 24, fontWeight: 600, marginTop: 6 }}>Detective Elena Voss</div>
@@ -27,7 +33,8 @@ export default function Profile({ onBack, activeTab, onNavigate }: ProfileProps)
               </div>
               <SectionBadge label="Premium" tone="accent" />
             </div>
-          </Panel>
+            </Panel>
+          </motion.div>
 
           <Panel tone="default" style={{ marginBottom: 12 }}>
             <div style={{ color: "#8e8e93", fontSize: 13, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>Overview</div>

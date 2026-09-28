@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { ShieldCheck } from "lucide-react";
 import AppShell from "../components/ui/AppShell";
 import BackButton from "../components/ui/BackButton";
 import Panel from "../components/ui/Panel";
@@ -7,152 +7,139 @@ import SectionBadge from "../components/ui/SectionBadge";
 
 type HomeProps = {
   onOpenCase: () => void;
+  caseOpening: boolean;
+  caseSeconds: number;
   onNavigate: (tab: "home" | "tv" | "notifications" | "profile") => void;
   activeTab: "home" | "tv" | "notifications" | "profile";
   onBack: () => void;
+  showHomeBadge?: boolean;
+  showTvBadge?: boolean;
+  showNotificationsBadge?: boolean;
+  showProfileBadge?: boolean;
 };
 
-export default function Home({ onOpenCase, onNavigate, activeTab, onBack }: HomeProps) {
-  const [confirm, setConfirm] = useState(false);
-  const [countdown, setCountdown] = useState(false);
-  const [seconds, setSeconds] = useState(60);
-
-  useEffect(() => {
-    if (!countdown) return;
-
-    if (seconds <= 0) {
-      setCountdown(false);
-      onOpenCase();
-      return;
-    }
-
-    const timer = window.setTimeout(() => {
-      setSeconds((s) => s - 1);
-    }, 1000);
-
-    return () => window.clearTimeout(timer);
-  }, [countdown, onOpenCase, seconds]);
+export default function Home({ onOpenCase, caseOpening, caseSeconds, onNavigate, activeTab, onBack, showHomeBadge = true, showTvBadge = true, showNotificationsBadge = true, showProfileBadge = true }: HomeProps) {
+  const progress = 1 - caseSeconds / 10;
 
   return (
-    <AppShell activeTab={activeTab} onNavigate={onNavigate}>
-      <div style={{ maxWidth: 760, margin: "0 auto", padding: "24px 20px 0" }}>
+    <AppShell activeTab={activeTab} onNavigate={onNavigate} showHomeBadge={showHomeBadge} showTvBadge={showTvBadge} showNotificationsBadge={showNotificationsBadge} showProfileBadge={showProfileBadge}>
+      <div style={{ maxWidth: 760, margin: "0 auto", padding: "28px 20px 96px" }}>
         <BackButton onBack={onBack} />
-        <div style={{ marginBottom: 24 }}>
-          <div style={{ color: "#8e8e93", fontSize: 13, letterSpacing: "0.22em", textTransform: "uppercase" }}>Investigation</div>
-          <h1 style={{ fontSize: 32, margin: "6px 0 0", color: "#f5f5f7", fontWeight: 600 }}>Current Case</h1>
-        </div>
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
+          <div style={{ color: "#8e8e93", fontSize: 12, letterSpacing: "0.26em", textTransform: "uppercase", marginBottom: 8 }}>
+            Investigation
+          </div>
+          <h1 style={{ fontSize: 34, lineHeight: 1.05, margin: 0, color: "#f5f5f7", fontWeight: 700 }}>Current Case</h1>
+          <p style={{ color: "#c7c7cc", marginTop: 10, fontSize: 15, lineHeight: 1.7 }}>
+            Review the active file and continue the secure investigative workflow.
+          </p>
+        </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3 }}>
-          <Panel tone="accent" style={{ marginBottom: 16 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-              <div>
-                <div style={{ color: "#ff8d8d", fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase" }}>Open file</div>
-                <div style={{ fontSize: 24, fontWeight: 600, marginTop: 6 }}>Forest House Murder</div>
-                <div style={{ color: "#d1d1d6", marginTop: 6 }}>Mardin / Savur • 18 July 2026</div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.08, duration: 0.35 }}>
+          <Panel tone="accent" style={{ marginTop: 24, padding: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+              <div style={{ flex: 1 }}>
+                <div style={{ color: "#ff8d8d", fontSize: 11, letterSpacing: "0.28em", textTransform: "uppercase", marginBottom: 8 }}>Open file</div>
+                <div style={{ fontSize: 28, fontWeight: 700, color: "#f5f5f7", lineHeight: 1.15 }}>Forest House Murder</div>
+                <div style={{ color: "#d1d1d6", marginTop: 8, fontSize: 14 }}>Mardin / Savur • 18 July 2026</div>
               </div>
-              <SectionBadge label="Active" tone="success" />
+              <SectionBadge label="Active" tone="accent" />
+            </div>
+
+            <div style={{ marginTop: 20, display: "grid", gap: 12 }}>
+              <div style={{ display: "flex", justifyContent: "space-between", color: "#d1d1d6", fontSize: 13 }}>
+                <span>Case readiness</span>
+                <span style={{ color: "#f5f5f7", fontWeight: 600 }}>94%</span>
+              </div>
+              <div style={{ height: 8, borderRadius: 999, background: "rgba(255,255,255,0.12)" }}>
+                <motion.div initial={{ width: 0 }} animate={{ width: "94%" }} transition={{ duration: 0.5 }} style={{ height: "100%", borderRadius: 999, background: "linear-gradient(90deg, #ff6b6b, #d40000)" }} />
+              </div>
             </div>
           </Panel>
         </motion.div>
 
-        <Panel tone="default" style={{ marginBottom: 16 }}>
-          <div style={{ color: "#8e8e93", fontSize: 13, letterSpacing: "0.2em", textTransform: "uppercase", marginBottom: 8 }}>Case summary</div>
-          <div style={{ color: "#f5f5f7", lineHeight: 1.7 }}>
-            Review the file, examine the evidence, and continue the inquiry from the secure case workspace.
-          </div>
-        </Panel>
-
-        <Panel tone="default" style={{ marginBottom: 16 }}>
-          <button
-            type="button"
-            onClick={() => setConfirm(true)}
-            style={{
-              width: "100%",
-              border: "none",
-              background: "transparent",
-              color: "#f5f5f7",
-              padding: 0,
-              textAlign: "left",
-              cursor: "pointer",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
-                <div style={{ fontSize: 18, fontWeight: 600 }}>Open case workspace</div>
-                <div style={{ color: "#8e8e93", marginTop: 4 }}>Continue to the investigation overview.</div>
-              </div>
-              <div style={{ color: "#ff5b5b", fontSize: 24 }}>›</div>
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12, duration: 0.35 }}>
+          <Panel tone="default" style={{ marginTop: 16, padding: 20 }}>
+            <div style={{ color: "#8e8e93", fontSize: 11, letterSpacing: "0.24em", textTransform: "uppercase", marginBottom: 10 }}>
+              Summary
             </div>
-          </button>
-        </Panel>
-
-        {countdown ? (
-          <Panel tone="default" style={{ marginTop: 8 }}>
-            <div style={{ textAlign: "center" }}>
-              <div style={{ color: "#8e8e93", fontSize: 13, letterSpacing: "0.2em", textTransform: "uppercase" }}>Preparing</div>
-              <div style={{ fontSize: 44, fontWeight: 600, marginTop: 8, color: "#f5f5f7" }}>00:{String(seconds).padStart(2, "0")}</div>
-            </div>
+            <p style={{ color: "#d1d1d6", lineHeight: 1.75, fontSize: 15 }}>
+              Review scene details, evidence status, and witness notes before entering the secure workspace.
+            </p>
           </Panel>
-        ) : null}
+        </motion.div>
 
-        {confirm ? (
-          <div
+        <motion.button
+          type="button"
+          onClick={onOpenCase}
+          whileHover={{ y: -2, scale: 1.01 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 280, damping: 24 }}
+          style={{
+            width: "100%",
+            border: "1px solid rgba(255,255,255,0.1)",
+            background: "linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.06))",
+            backdropFilter: "blur(18px)",
+            color: "#f5f5f7",
+            padding: "16px 18px",
+            textAlign: "left",
+            cursor: "pointer",
+            borderRadius: 22,
+            marginTop: 16,
+            boxShadow: "0 20px 44px rgba(0,0,0,0.22)",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 42, height: 42, borderRadius: 14, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(212,0,0,0.16)" }}>
+                <ShieldCheck size={20} color="#ff8d8d" />
+              </div>
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700 }}>Open case workspace</div>
+                <div style={{ color: "#c7c7cc", marginTop: 3, fontSize: 13 }}>Continue to the investigation overview</div>
+              </div>
+            </div>
+            <div style={{ color: "#ff8d8d", fontSize: 24 }}>›</div>
+          </div>
+        </motion.button>
+      </div>
+
+      <AnimatePresence>
+        {caseOpening ? (
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.24 }}
             style={{
               position: "fixed",
-              inset: 0,
-              background: "rgba(0,0,0,0.78)",
+              left: 16,
+              right: 16,
+              bottom: "calc(82px + env(safe-area-inset-bottom))",
               display: "flex",
               justifyContent: "center",
-              alignItems: "center",
-              zIndex: 1100,
-              padding: 20,
+              zIndex: 1200,
+              pointerEvents: "none",
             }}
           >
-            <Panel tone="elevated" style={{ width: 360, maxWidth: "100%" }}>
-              <div style={{ fontSize: 20, fontWeight: 600, marginBottom: 10 }}>Open case file?</div>
-              <div style={{ color: "#c7c7cc", lineHeight: 1.7 }}>
-                This will begin the secure investigation sequence and take you into the case workspace.
+            <div style={{ width: "100%", maxWidth: 440, border: "1px solid rgba(255,141,141,0.28)", borderRadius: 16, padding: 16, background: "rgba(18,12,12,0.94)", backdropFilter: "blur(18px)", boxShadow: "0 16px 44px rgba(0,0,0,0.48)" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 40, height: 40, flexShrink: 0, borderRadius: 12, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(212,0,0,0.16)" }}>
+                  <ShieldCheck size={20} color="#ff8d8d" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ color: "#f5f5f7", fontSize: 14, fontWeight: 700 }}>Vaka dosyası hazırlanıyor</div>
+                  <div style={{ color: "#a8a8ad", marginTop: 3, fontSize: 12 }}>Güvenli erişim başlatılıyor</div>
+                </div>
+                <div style={{ color: "#ff8d8d", fontVariantNumeric: "tabular-nums", fontSize: 18, fontWeight: 700 }}>00:{String(caseSeconds).padStart(2, "0")}</div>
               </div>
-              <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-                <button
-                  type="button"
-                  onClick={() => setConfirm(false)}
-                  style={{
-                    flex: 1,
-                    padding: "12px 14px",
-                    borderRadius: 999,
-                    border: "1px solid rgba(255,255,255,0.12)",
-                    background: "rgba(255,255,255,0.06)",
-                    color: "#f5f5f7",
-                    cursor: "pointer",
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setConfirm(false);
-                    setSeconds(60);
-                    setCountdown(true);
-                  }}
-                  style={{
-                    flex: 1,
-                    padding: "12px 14px",
-                    borderRadius: 999,
-                    border: "none",
-                    background: "linear-gradient(135deg, #ff3b30, #d40000)",
-                    color: "#fff",
-                    cursor: "pointer",
-                  }}
-                >
-                  Continue
-                </button>
+              <div style={{ height: 4, marginTop: 14, borderRadius: 999, background: "rgba(255,255,255,0.1)", overflow: "hidden" }}>
+                <motion.div initial={{ width: 0 }} animate={{ width: `${progress * 100}%` }} transition={{ duration: 0.45 }} style={{ height: "100%", borderRadius: 999, background: "linear-gradient(90deg, #ff8d8d, #d40000)" }} />
               </div>
-            </Panel>
-          </div>
+            </div>
+          </motion.div>
         ) : null}
-      </div>
+      </AnimatePresence>
     </AppShell>
   );
 }
